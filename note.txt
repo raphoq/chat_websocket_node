@@ -1,0 +1,16 @@
+1. Podłączenie do serwera (Automatycznie podłącza nas do pokoju lobby).
+2. Generuje się losowa nazwa dla usera aby mógł pisać i czytać wiadomości z lobby bez ustalenia ksywki.
+3. Ustawiamy sobie ksywkę i od tego momentu możemy czatować ze wszystkimi z pokoju lobby.
+4. Możemy zmienić pokój w każdym momencie, i załaduje nam do niego historie rozmów z tablicy.
+5. Musimy posiadać dane nt. listy pokoi, i użytkowników z pokoju w którym aktualnie przebywamy.
+
+
+
+
+
+
+
+
+
+6. Literał ksywek użytych w pokoju typu 'Lobby' : ['Raph', 'John']...
+7. 

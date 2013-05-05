@@ -1,0 +1,21 @@
+Zbudujemy prosty Czat.
+
+Serwer będzie:
+- udostępniał klientowi zasoby statyczne (HTML, CSS i skrypty JavaScript)
+- obsługiwał wiadomości w ramach Czatu
+
+Klient będzie:
+- używał JS do komunikacji z serwerem i komunikacji w ramach Czatu.
+
+Teoretycznie moglibśmy użyć metodologii Ajax, ale jest ona „kosztowna”
+(wymaga osobnych połączeń HTTP). Zamiast tego użyjemy więc nowszego podejścia
+bazującego na WebSockets.
+
+Ponieważ jedynie najnowsze, zgodne z HTML5, przeglądarki obsługują WebSockets,
+wykorzystamy narzędzie Socket.io, które w razie czego, w sposób niewidoczny
+dla serwera i klienta w przypadku braku obsługi WebSockets w przeglądarce
+przałączy się na którąś ze starszych technologii.
+
+1. tworzymy strukturę projektu
+2. definiujemy zależności – plik package.json
+3. instalujemy zależności – „npm install” 
