@@ -1,129 +1,68 @@
 $(document).ready(function () {
     'use strict';
-    var socket = io.connect('http://localhost:3000'),
-        entry_el = $('#send-message');
-		entry_el.attr('autocomplete', 'off');
-	var nickChangePattern = /^\/nick [A-Za-z0-9]*$/;
-	var roomChangePattern = /^\/join [A-Za-z0-9]*$/;
-	var myRoom = '';
+    var socket = io.connect('http://localhost:3000');
 	
     console.log('connecting…');
-
     socket.on('connect', function () {
         console.log('Połączony!');
     });
-
-	socket.on('joinResult', function (data) {
-		$('#info').append('<li class="join">Użytkownik ' + data + ' dołączył do czatu</li>');
+	/* Inform about connect */
+	socket.on('joinResult', function (data) {	
+		joinResult(data);
 	});
-	
-	
-	socket.on('roomsChanged', function (data) {
-		$('#room-list').empty();
-		for (var i = 0; i < data.rooms.length; i += 1) {
-			$('#room-list').append('<li>' + data.rooms[i] + '</li>');
-		};
-		
-		$('#room-list li').click(function () {
-			socket.emit('roomChange', $(this).text());
+	/* Print rooms list */
+	socket.on('roomsList', function (data) {	
+		roomsList(data.rooms, function (clickRoom) {
+			socket.emit('roomChange', clickRoom);		
 		});
-		
-		$('#room-list li:contains(' + myRoom + ')').css({"color": "red", "font-weight": "bold"});
-	
 	});
-	
-	
-	socket.on('roomHistory', function (data) {
-		$('#info').append('<li class="nicks">Zmieniłeś pokój na ' + data.current + '</li>');
-		myRoom = data.current;
-		$('#messages').empty();
-		for (var i = 0; i < data.history.length; i += 1) {
-			$('#messages').append('<li class="history">' + data.history[i] + '</li>');
-		};	
+	/* Load room history */
+	socket.on('roomHistory', function (data) {	
+		loadHistory(data.current, data.history);
 	});
-	
-	socket.on('roomJoin', function (data) {
-		$('#info').append('<li class="join">Użytkownik ' + data.nick + ' dołączył do grupy</li>');
+	/* Inform about room join */
+	socket.on('roomJoin', function (data) {		
+		roomJoin(data.nick);
 	});
-	
-	socket.on('roomLeave', function (data) {
-		$('#info').append('<li class="leave">' + data.nick + ' odłączył się od grupy</li>');
+	/* Inform about room leave */
+	socket.on('roomLeave', function (data) {	
+		roomLeave(data.nick);
 	});
-	
-	socket.on('nickStatus', function (data) {
-		$('#info').append('<li class="nicks">Zmieniłeś nick na ' + data + '</li>');
+	/* Inform user about change name himself */
+	socket.on('nickStatus', function (data) {	
+		nickStatus(data);
 	});
-	
-	socket.on('nickUsed', function (data) {
-		alert('Ktoś używa już nicku ' + data);
+	/* Inform user about used nickname */
+	socket.on('nickUsed', function (data) {		
+		nickUsed(data);
 	});
-	
-	socket.on('userJoin', function (data) {
-		$('#info').append('<li class="nicks">Użytkownik ' + data.old + ' zmienił ksywkę na ' + data.nick + '</li>');
+	/* Inform users about your nick change */
+	socket.on('nickChangeResult', function (data) {
+		nickChangeResult(data.old, data.nick);
 	});
-	
-	
-	
-	socket.on('onmsg', function (data) {
-		$('#messages').append('<li style="display:none">' + data.nick + ' : ' + data.msg + '</li>');
-		$('#messages li').fadeIn(500);
+	/* User counter */
+	socket.on('userCount', function (data) {
+		userCount(data.count);
 	});
-	
-	socket.on('stats', function (data) {
-		$('#counter').html('Online: ' + data.count);
-		
-	});
-	
+	/* Inform users about disconnect */
 	socket.on('logout', function (data) {
-		$('#info').append('<li class="leave">Wylogowany użytkownik ' + data + '</li>');
+		logoutInfo(data);
+	});
+	/* Print received messages */
+	socket.on('onmsg', function (data) {
+		onMsg(data.nick, data.msg);
+	});
+	/* Nick change button */
+	nickBtn(function(nick) {
+		socket.emit('nickChange', nick);	
+	});
+	/* Room change button */
+	roomBtn(function(room) {
+		socket.emit('roomChange', room);	
+	});
+	/* Send message, and process chat operations */
+	sendBtn(function() {
+		socket.emit(arguments[0], arguments[1]);
 	});
 	
-	$(entry_el).keypress(function(e){
-		if (e.keyCode === 13){
-			e.preventDefault();
-			$("#send-button").trigger('click');
-		};
-	});
-	
-	$('#nick-button').click(function () {
-		var nick = prompt('Podaj ksywkę');
-		if (nick !== null) {
-			socket.emit('nickChange', nick);
-		};
-		entry_el.focus();
-	});
-	
-	$('#room-button').click(function () {
-		var room = prompt('Pokój');
-		if (room !== null) {
-			socket.emit('roomChange', room);
-		};
-		entry_el.focus();
-	});
-	
-	$('#send-button').click(function () {
-		var message = entry_el.attr('value');
-		
-		if (nickChangePattern.test(message) === true) {
-			var nickname = message.slice(6);
-			socket.emit('nickChange', nickname);
-		} else {
-			if (roomChangePattern.test(message) === true) {
-				var to_join = message.slice(6);
-				socket.emit('roomChange', to_join);
-			} else {
-				if (message !== '') {
-					socket.emit('msg', message);
-				};
-			};
-		};
-		
-		
-		entry_el.attr('value', '');
-		
-		entry_el.focus();
-		
-		
-	});
-   
 });

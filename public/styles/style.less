@@ -6,7 +6,7 @@
 @WindowWidth: 750px;
 @InputWidth: 620px;
 @msgWindowHeight: 400px;
-@msgWindowBgColor: #eee;
+@msgWindowBgColor: #FFFFBF;
 
 @roomWindowBgColor: #ddd;
 
@@ -22,6 +22,7 @@ a {
 #counter {
 	margin-bottom: 10px;
 	font-weight: bold;
+	padding-left: 25px;
 }
 
 #content {
@@ -69,7 +70,6 @@ input[type='button'] {
   width: 150px;
   height: @msgWindowHeight;
   overflow: auto;
-  background-color: @msgWindowBgColor;
   margin-bottom: 1em;
   margin-right: 10px;
   padding-left: 20px;
@@ -78,9 +78,14 @@ input[type='button'] {
 }
 
 #stats {
-  padding-left: 20px;
+  margin-left: 20px;
+	padding-left: 20px;
   float: right;
   width: 150px;
+	border: 2px solid #0086B3;
+	border-radius: 10px;
+	overflow: auto;
+	height: @msgWindowHeight;
 }
 #messages {
   color: @msgColor;
@@ -92,7 +97,6 @@ input[type='button'] {
   margin-left: 10px;
   padding-left: 5px;
   border: 2px solid #0086B3;
-  border-radius: 10px;
 	li {
 	list-style-type: none;
   }
